@@ -303,6 +303,25 @@ void download_file(int sockfd,string client)
     write(sockfd,&f_size,sizeof(long long));
 
 }
+void list_files(int sockfd)
+{
+    int no_files=file_user.size();
+    write(sockfd,&no_files,sizeof(int));
+
+    for(auto it=file_user.begin();it!=file_user.end();it++)
+    {
+        string filename=it->first;
+        int len=filename.length();
+        
+        char file[len+1];
+        bzero(file,len+1);
+        strcpy(file,filename.c_str());
+    
+        write(sockfd,&len,sizeof(int));
+        write(sockfd,file,len);
+    }
+
+}
 void* functionalities(void* args)
 {
     // struct args_of_fun client=*(struct args_of_fun *)args;
@@ -429,6 +448,7 @@ void* functionalities(void* args)
         break;
         
         case list_file:
+            list_files(sockfd);
 
         break;
         

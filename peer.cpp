@@ -7,6 +7,7 @@
 #include <string.h> 
 #include<stdlib.h>
 #include<termios.h>
+#include<openssl/sha.h>
 // #include<conio.h>
 
 #define CHUNK_SIZE 512000 
@@ -41,6 +42,10 @@ struct chunk
 	int size;
 	char name[100];
 };
+string calc_sha()
+{
+	
+}
 void initialize()
 {
     s_mapStringValues["login"]=login;
@@ -658,6 +663,32 @@ void share_file(int sockfd)
 
 
 }
+void list_files(int sockfd)
+{
+	int no_files;
+	read(sockfd,&no_files,sizeof(int));
+	if(no_files>0)
+	{
+		cout<<"Files present are:- "<<endl;
+		for(int i=0;i<no_files;i++)
+		{
+			int len;
+			read(sockfd,&len,sizeof(int));
+			char file[len+1];
+			bzero(file,len+1);
+
+			read(sockfd,file,len);
+			string filename(file);
+
+			cout<<filename<<endl;
+		}
+	}
+	else
+	{
+		cout<<"No Files to display"<<endl;
+	}
+	
+}
 int main(int argc,char* argv[])
 {
 	initialize();
@@ -864,7 +895,7 @@ int main(int argc,char* argv[])
         	break;
 
         	case list_file:
-
+			list_files(sockfd);
         	break;
         
         	default:
